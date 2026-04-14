@@ -1,10 +1,13 @@
 from collections import defaultdict
+from domain.analysis_result import AnalysisResult
 
 class Analyzer:
-    def analyze(self, records):
+    def analyze(self, records, min_mag=3.0):
+        filtered = [r for r in records if r.magnitude >= min_mag]
+
         grouped = defaultdict(int)
 
-        for r in records:
+        for r in filtered:
             day = r.time.date()
             grouped[day] += 1
 
@@ -14,7 +17,7 @@ class Analyzer:
         conclusion = (
             "Supported"
             if len(burst_days) > len(grouped) * 0.3
-            else "Not Supported"
+            else "Inconclusive"
         )
 
         return AnalysisResult(avg_daily, burst_days, conclusion)
